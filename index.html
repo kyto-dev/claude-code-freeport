@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freeport — Finanzas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:        #0c0b0a;
+      --surface:   #141210;
+      --surface-2: #1c1916;
+      --surface-3: #242018;
+      --border:    rgba(255,255,255,0.065);
+      --gold:      #c9a255;
+      --gold-2:    #e8c070;
+      --gold-dim:  rgba(201,162,85,0.10);
+      --text:      #f0ebe2;
+      --text-2:    #8a8070;
+      --text-3:    #453f35;
+      --green:     #5aad74;
+      --red:       #c85555;
+      --blue:      #4f82c4;
+      --purple:    #9b6fc4;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      display: flex;
+    }
+
+    /* Grain texture overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── SIDEBAR ─────────────────────────────────────────── */
+    .sidebar {
+      width: 224px;
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      padding: 32px 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-mark {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 2px;
+    }
+
+    .logo-diamond {
+      width: 22px;
+      height: 22px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .logo-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-tag {
+      font-size: 10.5px;
+      color: var(--text-3);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding-left: 32px;
+    }
+
+    .nav {
+      padding: 20px 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      cursor: pointer;
+      color: var(--text-2);
+      font-size: 13.5px;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .nav-item:hover { background: var(--surface-2); color: var(--text); }
+
+    .nav-item.active {
+      background: var(--gold-dim);
+      color: var(--gold);
+    }
+
+    .nav-icon {
+      width: 17px; height: 17px;
+      flex-shrink: 0;
+      opacity: 0.9;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--gold);
+      color: #0c0b0a;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    .nav-section {
+      padding: 16px 12px 6px;
+      font-size: 10px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .month-block {
+      padding: 16px 24px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .month-block-label {
+      font-size: 10px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 10px;
+    }
+
+    .month-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .month-btn {
+      background: none;
+      border: none;
+      color: var(--text-3);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 2px 4px;
+      transition: color 0.15s;
+    }
+    .month-btn:hover { color: var(--text); }
+
+    .month-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ─── MAIN ────────────────────────────────────────────── */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .main::-webkit-scrollbar { width: 3px; }
+    .main::-webkit-scrollbar-track { background: transparent; }
+    .main::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
+
+    /* ─── VIEWS ───────────────────────────────────────────── */
+    .view { display: none; padding: 40px 44px; }
+    .view.active {
+      display: block;
+      animation: viewIn 0.28s ease;
+    }
+
+    @keyframes viewIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header {
+      margin-bottom: 34px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .page-sub {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-top: 5px;
+    }
+
+    /* ─── CARDS ───────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-label {
+      font-size: 10.5px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 14px;
+    }
+
+    /* ─── DASHBOARD GRID ──────────────────────────────────── */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    /* Stat cards */
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .stat-currency {
+      font-size: 16px;
+      font-weight: 400;
+      opacity: 0.5;
+      margin-right: 1px;
+      vertical-align: super;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11.5px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    .pill.up   { background: rgba(200,85,85,0.12); color: var(--red); }
+    .pill.down { background: rgba(90,173,116,0.12); color: var(--green); }
+    .pill.neutral { background: var(--surface-2); color: var(--text-2); }
+
+    /* ─── CHART CARD ─────────────────────────────────────── */
+    .chart-card { grid-column: span 3; }
+
+    .chart-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 18px;
+      padding-top: 2px;
+    }
+
+    .leg-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .leg-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    #trend-svg { width: 100%; height: 180px; }
+
+    /* ─── CATEGORIES CARD ────────────────────────────────── */
+    .cats-card { grid-column: span 2; }
+
+    .cat-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .cat-row:last-child { margin-bottom: 0; }
+
+    .cat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    .cat-name { flex: 0 0 110px; font-size: 13.5px; }
+
+    .cat-track {
+      flex: 1;
+      height: 2px;
+      background: var(--surface-3);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .cat-fill {
+      height: 100%;
+      border-radius: 1px;
+      transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cat-amount {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      min-width: 72px;
+      text-align: right;
+    }
+
+    /* ─── DONUT CARD ─────────────────────────────────────── */
+    .donut-card { display: flex; flex-direction: column; align-items: center; }
+    #donut-svg { width: 148px; height: 148px; margin: 4px 0 14px; }
+
+    .donut-leg {
+      font-size: 11.5px;
+      color: var(--text-2);
+      line-height: 2;
+      text-align: center;
+    }
+
+    /* ─── TX CARD ────────────────────────────────────────── */
+    .tx-card { grid-column: span 3; }
+
+    .tx-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .tx-row:last-child { border-bottom: none; }
+
+    .tx-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .tx-info { flex: 1; }
+    .tx-name { font-size: 13.5px; font-weight: 500; }
+    .tx-meta { font-size: 11.5px; color: var(--text-2); margin-top: 1px; }
+    .tx-amt  { font-family: 'Playfair Display', serif; font-size: 14px; color: var(--red); }
+    .tx-date { font-size: 11.5px; color: var(--text-3); min-width: 52px; text-align: right; }
+
+    /* ─── UPLOAD VIEW ────────────────────────────────────── */
+    .upload-area {
+      border: 1.5px dashed var(--border);
+      border-radius: 18px;
+      padding: 70px 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--surface);
+    }
+
+    .upload-area:hover,
+    .upload-area.drag { border-color: var(--gold); background: var(--gold-dim); }
+    .upload-area.drag { transform: scale(1.008); }
+
+    .upload-icon-wrap {
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin: 0 auto 22px;
+    }
+
+    .upload-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .upload-sub {
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.65;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .btn-gold {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold);
+      color: #0c0b0a;
+      border: none;
+      padding: 11px 26px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 22px;
+      transition: all 0.15s;
+    }
+    .btn-gold:hover { background: var(--gold-2); transform: translateY(-1px); }
+
+    #file-input { display: none; }
+
+    /* Analyzing bar */
+    .analyzing {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,162,85,0.25);
+      border-radius: 10px;
+      padding: 13px 20px;
+      margin-bottom: 18px;
+      font-size: 13.5px;
+      color: var(--gold);
+    }
+    .analyzing.on { display: flex; }
+
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(201,162,85,0.25);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Preview panel */
+    .preview {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+    }
+    .preview.on {
+      display: block;
+      animation: viewIn 0.25s ease;
+    }
+
+    .preview-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      margin-bottom: 22px;
+    }
+
+    .preview-cols {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .preview-img-box {
+      background: var(--surface-2);
+      border-radius: 10px;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preview-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-form { display: flex; flex-direction: column; gap: 15px; }
+
+    .f-label {
+      font-size: 10.5px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .f-input {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 13px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.15s;
+      appearance: none;
+    }
+    .f-input:focus { border-color: var(--gold); }
+
+    .form-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-save {
+      flex: 1;
+      background: var(--gold);
+      color: #0c0b0a;
+      border: none;
+      padding: 11px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-save:hover { background: var(--gold-2); }
+
+    .btn-cancel {
+      flex: 1;
+      background: transparent;
+      color: var(--text-2);
+      border: 1px solid var(--border);
+      padding: 11px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-cancel:hover { border-color: var(--text-2); color: var(--text); }
+
+    /* ─── CATEGORIES VIEW ────────────────────────────────── */
+    .cat-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .cat-detail-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      border-top-width: 3px;
+    }
+
+    .cd-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .cd-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .cd-emoji { font-size: 26px; }
+
+    .progress-track {
+      height: 3px;
+      background: var(--surface-3);
+      border-radius: 2px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cd-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-2);
+    }
+
+    /* ─── TRENDS VIEW ────────────────────────────────────── */
+    .trend-cards { display: flex; flex-direction: column; gap: 16px; }
+
+    .trend-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+    }
+
+    .trend-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .trend-name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .trend-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+    }
+
+    .trend-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .trend-val {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .trend-months {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 8px;
+    }
+
+    /* ─── TOAST ──────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      background: var(--surface);
+      border: 1px solid rgba(90,173,116,0.3);
+      color: var(--green);
+      padding: 13px 20px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.28s ease;
+      z-index: 9998;
+      pointer-events: none;
+    }
+    .toast.on { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ──────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">
+      <div class="logo-diamond"></div>
+      <div class="logo-name">Freeport</div>
+    </div>
+    <div class="logo-tag">Finanzas personales</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section">Principal</div>
+
+    <div class="nav-item active" data-view="dashboard">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+      </svg>
+      Resumen
+    </div>
+
+    <div class="nav-item" data-view="categories">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM16 17h-2v-2h2v-2h2v2h2v2h-2v2h-2v-2z"/>
+      </svg>
+      Categorías
+    </div>
+
+    <div class="nav-item" data-view="trends">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      Tendencias
+    </div>
+
+    <div class="nav-section" style="margin-top: 8px;">Acciones</div>
+
+    <div class="nav-item" data-view="upload">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+      </svg>
+      Subir Factura
+      <span class="nav-badge">Nuevo</span>
+    </div>
+  </nav>
+
+  <div class="month-block">
+    <div class="month-block-label">Período activo</div>
+    <div class="month-row">
+      <button class="month-btn" id="prev-m">‹</button>
+      <span class="month-label" id="month-display">Marzo 2026</span>
+      <button class="month-btn" id="next-m">›</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ─── MAIN ──────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div class="view active" id="view-dashboard">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Resumen</h1>
+        <p class="page-sub">Marzo 2026 · actualizado hoy a las 14:32</p>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+
+      <!-- Stat: Total gasto -->
+      <div class="card">
+        <div class="card-label">Gastos del mes</div>
+        <div class="stat-value">
+          <span class="stat-currency">$</span><span id="count-total">0</span>
+        </div>
+        <div class="pill up">↑ 8.4% vs febrero</div>
+      </div>
+
+      <!-- Stat: Categoría líder -->
+      <div class="card">
+        <div class="card-label">Mayor categoría</div>
+        <div class="stat-value" style="color: var(--gold); font-size: 26px; padding-top: 4px;">Hogar</div>
+        <div style="font-size: 13px; color: var(--text-2); margin-top: 10px;">$210K · 29.4% del total</div>
+      </div>
+
+      <!-- Stat: Facturas -->
+      <div class="card">
+        <div class="card-label">Facturas registradas</div>
+        <div class="stat-value"><span id="count-invoices">0</span></div>
+        <div class="pill down" style="margin-top: 10px;">+3 esta semana</div>
+      </div>
+
+      <!-- Trend chart -->
+      <div class="card chart-card">
+        <div class="chart-top">
+          <div>
+            <div class="card-label">Evolución de gastos</div>
+            <div style="font-size: 12.5px; color: var(--text-2);">Últimos 6 meses · CLP</div>
+          </div>
+          <div class="chart-legend">
+            <div class="leg-item">
+              <div class="leg-dot" style="background: var(--gold)"></div>2026
+            </div>
+            <div class="leg-item">
+              <div class="leg-dot" style="background: var(--text-3)"></div>2025
+            </div>
+          </div>
+        </div>
+        <svg id="trend-svg" viewBox="0 0 800 180" preserveAspectRatio="none"></svg>
+      </div>
+
+      <!-- Categories list -->
+      <div class="card cats-card">
+        <div class="card-label">Por categoría</div>
+        <div id="cat-list"></div>
+      </div>
+
+      <!-- Donut -->
+      <div class="card donut-card">
+        <div class="card-label">Distribución</div>
+        <svg id="donut-svg" viewBox="0 0 148 148"></svg>
+        <div class="donut-leg" id="donut-leg"></div>
+      </div>
+
+      <!-- Recent transactions -->
+      <div class="card tx-card">
+        <div class="card-label" style="margin-bottom: 2px;">Transacciones recientes</div>
+        <div id="tx-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="view" id="view-categories">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Categorías</h1>
+        <p class="page-sub">Desglose completo · Marzo 2026</p>
+      </div>
+    </div>
+    <div class="cat-detail-grid" id="cat-detail-grid"></div>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="view" id="view-upload">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Subir Factura</h1>
+        <p class="page-sub">Fotografía o escanea — la IA extrae los datos automáticamente</p>
+      </div>
+    </div>
+
+    <div class="analyzing" id="analyzing">
+      <div class="spinner"></div>
+      Analizando imagen con IA · extrayendo monto, comercio y categoría…
+    </div>
+
+    <div class="upload-area" id="upload-area">
+      <div class="upload-icon-wrap">📄</div>
+      <div class="upload-title">Arrastra tu factura aquí</div>
+      <div class="upload-sub">
+        Acepta fotografías JPG, PNG y PDF.<br>
+        Detecta automáticamente monto, comercio, fecha y categoría.
+      </div>
+      <button class="btn-gold" onclick="document.getElementById('file-input').click()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+        </svg>
+        Seleccionar archivo
+      </button>
+      <input type="file" id="file-input" accept="image/*,.pdf">
+    </div>
+
+    <div class="preview" id="preview">
+      <div class="preview-title">Confirmar datos extraídos</div>
+      <div class="preview-cols">
+        <div class="preview-img-box" id="prev-img-box">
+          <img id="prev-img" src="" alt="Factura">
+        </div>
+        <div class="preview-form">
+          <div>
+            <label class="f-label">Comercio</label>
+            <input class="f-input" id="f-merchant" value="Supermercado Jumbo">
+          </div>
+          <div>
+            <label class="f-label">Monto</label>
+            <input class="f-input" id="f-amount" value="$47.500">
+          </div>
+          <div>
+            <label class="f-label">Fecha</label>
+            <input class="f-input" type="date" id="f-date" value="2026-03-16">
+          </div>
+          <div>
+            <label class="f-label">Categoría</label>
+            <select class="f-input" id="f-cat">
+              <option>Alimentación</option>
+              <option>Transporte</option>
+              <option>Entretenimiento</option>
+              <option>Salud</option>
+              <option>Hogar</option>
+              <option>Otros</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label">Notas</label>
+            <input class="f-input" id="f-notes" placeholder="Opcional — ej: compras semanales">
+          </div>
+          <div class="form-btns">
+            <button class="btn-save" id="btn-save">Guardar factura</button>
+            <button class="btn-cancel" id="btn-cancel">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRENDS -->
+  <div class="view" id="view-trends">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Tendencias</h1>
+        <p class="page-sub">Evolución mensual por categoría · últimos 6 meses</p>
+      </div>
+    </div>
+    <div class="trend-cards" id="trend-cards"></div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Factura guardada correctamente</div>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────────────
+const CATS = [
+  { name: 'Hogar',           amount: 210000, color: '#c9a255', emoji: '🏠' },
+  { name: 'Alimentación',    amount: 175000, color: '#5aad74', emoji: '🛒' },
+  { name: 'Transporte',      amount: 128000, color: '#4f82c4', emoji: '🚗' },
+  { name: 'Entretenimiento', amount:  89500, color: '#c47db0', emoji: '🎬' },
+  { name: 'Salud',           amount:  65000, color: '#c85555', emoji: '❤️' },
+  { name: 'Otros',           amount:  45000, color: '#6b6050', emoji: '📦' },
+];
+
+const TOTAL = CATS.reduce((s, c) => s + c.amount, 0);
+
+const MONTHS_DATA = {
+  labels: ['Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar'],
+  cur:    [620000, 810000, 940000, 598000, 658000, TOTAL],
+  prev:   [540000, 695000, 880000, 570000, 625000, 668000],
+};
+
+const TXS = [
+  { name: 'Supermercado Lider',  cat: 'Alimentación',    amt: 47500,  date: 'Mar 16', icon: '🛒', color: '#5aad74' },
+  { name: 'Copec Combustible',   cat: 'Transporte',      amt: 38200,  date: 'Mar 15', icon: '⛽', color: '#4f82c4' },
+  { name: 'Netflix',             cat: 'Entretenimiento', amt: 12900,  date: 'Mar 14', icon: '📺', color: '#c47db0' },
+  { name: 'Farmacia Cruz Verde', cat: 'Salud',           amt: 28600,  date: 'Mar 13', icon: '💊', color: '#c85555' },
+  { name: 'Homecenter',          cat: 'Hogar',           amt: 85000,  date: 'Mar 12', icon: '🔧', color: '#c9a255' },
+];
+
+const TREND_DATA = {
+  'Hogar':           [178000,192000,218000,200000,195000,210000],
+  'Alimentación':    [158000,168000,182000,165000,170000,175000],
+  'Transporte':      [108000,124000,138000,116000,121000,128000],
+  'Entretenimiento': [68000, 82000, 94000, 76000, 80000, 89500],
+};
+
+// ─── NAVIGATION ────────────────────────────────────────────────
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', () => {
+    const v = el.dataset.view;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(`view-${v}`).classList.add('active');
+    if (v === 'categories') renderCatDetail();
+    if (v === 'trends')     renderTrends();
+  });
+});
+
+// ─── MONTH NAV ─────────────────────────────────────────────────
+const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                     'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+let mIdx = 2, mYear = 2026;
+
+const mdisplay = document.getElementById('month-display');
+document.getElementById('prev-m').onclick = () => {
+  mIdx--; if (mIdx < 0) { mIdx = 11; mYear--; }
+  mdisplay.textContent = `${MONTH_NAMES[mIdx]} ${mYear}`;
+};
+document.getElementById('next-m').onclick = () => {
+  mIdx++; if (mIdx > 11) { mIdx = 0; mYear++; }
+  mdisplay.textContent = `${MONTH_NAMES[mIdx]} ${mYear}`;
+};
+
+// ─── COUNTER ANIMATION ─────────────────────────────────────────
+function countUp(el, target, ms = 1100) {
+  const t0 = performance.now();
+  const tick = (now) => {
+    const p = Math.min((now - t0) / ms, 1);
+    const ease = 1 - Math.pow(1 - p, 4);
+    el.textContent = Math.round(ease * target).toLocaleString('es-CL');
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+// ─── TREND CHART ───────────────────────────────────────────────
+function renderTrendSvg() {
+  const svg = document.getElementById('trend-svg');
+  const W = 800, H = 180;
+  const pad = { t: 16, r: 20, b: 28, l: 10 };
+  const { labels, cur, prev } = MONTHS_DATA;
+  const all = [...cur, ...prev];
+  const minV = Math.min(...all) * 0.88;
+  const maxV = Math.max(...all) * 1.04;
+  const xs = W - pad.l - pad.r;
+  const xStep = xs / (labels.length - 1);
+
+  const sy = v => pad.t + (1 - (v - minV) / (maxV - minV)) * (H - pad.t - pad.b);
+  const pts = arr => arr.map((v, i) => [pad.l + i * xStep, sy(v)]);
+
+  const smooth = (pts, close = false) => {
+    let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for (let i = 1; i < pts.length; i++) {
+      const cpx = xStep * 0.42;
+      d += ` C ${(pts[i-1][0]+cpx).toFixed(1)} ${pts[i-1][1].toFixed(1)},`
+         + ` ${(pts[i][0]-cpx).toFixed(1)} ${pts[i][1].toFixed(1)},`
+         + ` ${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)}`;
+    }
+    if (close) {
+      d += ` L ${pts[pts.length-1][0]} ${H - pad.b} L ${pts[0][0]} ${H - pad.b} Z`;
+    }
+    return d;
+  };
+
+  const cp = pts(cur), pp = pts(prev);
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="gcur" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#c9a255" stop-opacity="0.28"/>
+        <stop offset="100%" stop-color="#c9a255" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="gprev" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#453f35" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="#453f35" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${[0.25,0.5,0.75].map(t => {
+      const y = (pad.t + t * (H - pad.t - pad.b)).toFixed(1);
+      return `<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`;
+    }).join('')}
+    <path d="${smooth(pp, true)}" fill="url(#gprev)"/>
+    <path d="${smooth(cp, true)}" fill="url(#gcur)"/>
+    <path d="${smooth(pp)}" fill="none" stroke="rgba(69,63,53,0.7)" stroke-width="1.5"/>
+    <path d="${smooth(cp)}" fill="none" stroke="#c9a255" stroke-width="2"/>
+    ${cp.map((p, i) => `
+      <circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="5" fill="#c9a255" opacity="0.15"/>
+      <circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="#c9a255"/>
+      <text x="${p[0].toFixed(1)}" y="${H - 7}" text-anchor="middle"
+            font-family="DM Sans,sans-serif" font-size="11" fill="rgba(255,255,255,0.3)">${labels[i]}</text>
+    `).join('')}
+  `;
+}
+
+// ─── CATEGORY BARS ─────────────────────────────────────────────
+function renderCatList() {
+  const maxAmt = Math.max(...CATS.map(c => c.amount));
+  document.getElementById('cat-list').innerHTML = CATS.map(c => `
+    <div class="cat-row">
+      <div class="cat-dot" style="background:${c.color}"></div>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-track">
+        <div class="cat-fill" style="width:0%;background:${c.color}"
+             data-w="${(c.amount/maxAmt*100).toFixed(1)}"></div>
+      </div>
+      <div class="cat-amount">$${(c.amount/1000).toFixed(0)}K</div>
+    </div>
+  `).join('');
+  setTimeout(() => {
+    document.querySelectorAll('.cat-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  }, 80);
+}
+
+// ─── DONUT ─────────────────────────────────────────────────────
+function renderDonut() {
+  const cx = 74, cy = 74, R = 54, r = 38;
+  let angle = -Math.PI / 2;
+  const arcs = CATS.map(c => {
+    const sweep = (c.amount / TOTAL) * 2 * Math.PI;
+    const end = angle + sweep;
+    const large = sweep > Math.PI ? 1 : 0;
+    const cos0 = Math.cos(angle), sin0 = Math.sin(angle);
+    const cos1 = Math.cos(end),   sin1 = Math.sin(end);
+    const d = [
+      `M ${(cx + R*cos0).toFixed(2)} ${(cy + R*sin0).toFixed(2)}`,
+      `A ${R} ${R} 0 ${large} 1 ${(cx + R*cos1).toFixed(2)} ${(cy + R*sin1).toFixed(2)}`,
+      `L ${(cx + r*cos1).toFixed(2)} ${(cy + r*sin1).toFixed(2)}`,
+      `A ${r} ${r} 0 ${large} 0 ${(cx + r*cos0).toFixed(2)} ${(cy + r*sin0).toFixed(2)}`,
+      'Z'
+    ].join(' ');
+    angle = end;
+    return { d, color: c.color, name: c.name };
+  });
+
+  document.getElementById('donut-svg').innerHTML =
+    arcs.map(a => `<path d="${a.d}" fill="${a.color}" opacity="0.88"/>`).join('') +
+    `<text x="${cx}" y="${cy-5}" text-anchor="middle"
+           font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="#f0ebe2">Total</text>
+     <text x="${cx}" y="${cy+11}" text-anchor="middle"
+           font-family="DM Sans,sans-serif" font-size="11" fill="#8a8070">$${(TOTAL/1000).toFixed(0)}K</text>`;
+
+  document.getElementById('donut-leg').innerHTML =
+    CATS.slice(0,4).map(c =>
+      `<span style="color:${c.color}">●</span> ${c.name}<br>`
+    ).join('');
+}
+
+// ─── TRANSACTIONS ───────────────────────────────────────────────
+function renderTxs() {
+  document.getElementById('tx-list').innerHTML = TXS.map(t => `
+    <div class="tx-row">
+      <div class="tx-icon" style="background:${t.color}1a">${t.icon}</div>
+      <div class="tx-info">
+        <div class="tx-name">${t.name}</div>
+        <div class="tx-meta">${t.cat}</div>
+      </div>
+      <div class="tx-amt">−$${t.amt.toLocaleString('es-CL')}</div>
+      <div class="tx-date">${t.date}</div>
+    </div>
+  `).join('');
+}
+
+// ─── CATEGORY DETAIL ────────────────────────────────────────────
+function renderCatDetail() {
+  document.getElementById('cat-detail-grid').innerHTML = CATS.map(c => `
+    <div class="cat-detail-card" style="border-top-color:${c.color}">
+      <div class="cd-top">
+        <div>
+          <div class="card-label">${c.name}</div>
+          <div class="cd-val" style="color:${c.color}">$${(c.amount/1000).toFixed(1)}K</div>
+        </div>
+        <div class="cd-emoji">${c.emoji}</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:0%;background:${c.color}"
+             data-w="${(c.amount/TOTAL*100).toFixed(1)}"></div>
+      </div>
+      <div class="cd-meta">
+        <span>${(c.amount/TOTAL*100).toFixed(1)}% del total</span>
+        <span>~$${Math.round(c.amount/30).toLocaleString('es-CL')}/día</span>
+      </div>
+    </div>
+  `).join('');
+  setTimeout(() => {
+    document.querySelectorAll('.progress-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  }, 80);
+}
+
+// ─── TRENDS ─────────────────────────────────────────────────────
+function renderTrends() {
+  const labels = MONTHS_DATA.labels;
+  document.getElementById('trend-cards').innerHTML =
+    Object.entries(TREND_DATA).map(([name, data]) => {
+      const cat = CATS.find(c => c.name === name);
+      const pct = ((data[5] - data[0]) / data[0] * 100).toFixed(1);
+      const up = pct > 0;
+      const W = 600, H = 56, p = 6;
+      const minV = Math.min(...data), maxV = Math.max(...data);
+      const pts = data.map((v, i) => [
+        p + i * (W - p*2) / (data.length - 1),
+        H - p - (v - minV) / (maxV - minV || 1) * (H - p*2)
+      ]);
+      const d = pts.map((pt, i) => `${i===0?'M':'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' ');
+      return `
+        <div class="trend-card">
+          <div class="trend-top">
+            <div class="trend-name-row">
+              <div style="width:9px;height:9px;border-radius:50%;background:${cat.color}"></div>
+              <div class="trend-name">${name}</div>
+            </div>
+            <div class="trend-right">
+              <span class="trend-val">$${(data[5]/1000).toFixed(0)}K este mes</span>
+              <span class="pill ${up?'up':'down'}">${up?'↑':'↓'} ${Math.abs(pct)}%</span>
+            </div>
+          </div>
+          <svg width="100%" height="56" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+            <path d="${d}" fill="none" stroke="${cat.color}" stroke-width="2" stroke-linejoin="round"/>
+            ${pts.map(pt => `<circle cx="${pt[0].toFixed(1)}" cy="${pt[1].toFixed(1)}" r="3.5" fill="${cat.color}"/>`).join('')}
+          </svg>
+          <div class="trend-months">
+            ${labels.map(l => `<span>${l}</span>`).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+}
+
+// ─── UPLOAD FLOW ────────────────────────────────────────────────
+const uploadArea  = document.getElementById('upload-area');
+const fileInput   = document.getElementById('file-input');
+const analyzing   = document.getElementById('analyzing');
+const preview     = document.getElementById('preview');
+
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('drag');
+  if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e => { if (e.target.files[0]) processFile(e.target.files[0]); });
+
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    analyzing.classList.add('on');
+    uploadArea.style.display = 'none';
+    setTimeout(() => {
+      analyzing.classList.remove('on');
+      const img = document.getElementById('prev-img');
+      const box = document.getElementById('prev-img-box');
+      if (file.type.startsWith('image/')) {
+        img.src = e.target.result;
+        img.style.display = 'block';
+      } else {
+        box.innerHTML = '<div style="font-size:42px;color:var(--text-2)">📄</div>';
+      }
+      preview.classList.add('on');
+    }, 2200);
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById('btn-cancel').onclick = () => {
+  preview.classList.remove('on');
+  uploadArea.style.display = '';
+  fileInput.value = '';
+};
+
+document.getElementById('btn-save').onclick = () => {
+  preview.classList.remove('on');
+  uploadArea.style.display = '';
+  fileInput.value = '';
+  const t = document.getElementById('toast');
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 3000);
+};
+
+// ─── INIT ────────────────────────────────────────────────────────
+renderTrendSvg();
+renderCatList();
+renderDonut();
+renderTxs();
+
+setTimeout(() => {
+  countUp(document.getElementById('count-total'), TOTAL);
+  countUp(document.getElementById('count-invoices'), 23);
+}, 100);
+</script>
+</body>
+</html>
