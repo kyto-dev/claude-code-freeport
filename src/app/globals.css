@@ -1,25 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg:        #0c0b0a;
-  --surface:   #141210;
-  --surface-2: #1c1916;
-  --surface-3: #242018;
-  --border:    rgba(255, 255, 255, 0.065);
-  --gold:      #c9a255;
-  --gold-2:    #e8c070;
-  --gold-dim:  rgba(201, 162, 85, 0.10);
-  --text:      #f0ebe2;
-  --text-2:    #8a8070;
-  --text-3:    #453f35;
-  --green:     #5aad74;
-  --red:       #c85555;
-  --blue:      #4f82c4;
-  --purple:    #9b6fc4;
+  --bg:         #191919;
+  --surface:    #202020;
+  --surface-2:  #2f2f2f;
+  --surface-3:  #373737;
+  --border:     rgba(255, 255, 255, 0.08);
+  --accent:     #2383e2;
+  --accent-2:   #5aa3f0;
+  --accent-dim: rgba(35, 131, 226, 0.12);
+  --text:       #fffffe;
+  --text-2:     #9b9a97;
+  --text-3:     #5a5a58;
+  --green:      #4d9375;
+  --red:        #e03e3e;
+  --blue:       #2383e2;
+  --purple:     #9065b0;
+  --orange:     #d9730d;
+  --yellow:     #dfab01;
 }
 
 *, *::before, *::after {
@@ -36,19 +38,9 @@ body {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
-}
-
-/* Grain texture overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  opacity: 0.025;
-  pointer-events: none;
-  z-index: 9999;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Scrollbar styles */

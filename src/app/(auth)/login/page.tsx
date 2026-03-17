@@ -40,7 +40,7 @@ export default function LoginPage() {
             style={{
               width: 22,
               height: 22,
-              background: 'var(--gold)',
+              background: 'var(--accent)',
               transform: 'rotate(45deg)',
               borderRadius: 3,
               flexShrink: 0,
@@ -48,7 +48,7 @@ export default function LoginPage() {
           />
           <span
             style={{
-              fontFamily: 'Playfair Display, serif',
+              fontFamily: 'Inter, sans-serif',
               fontSize: 22,
               fontWeight: 700,
               letterSpacing: '-0.3px',
@@ -71,7 +71,7 @@ export default function LoginPage() {
 
       <h1
         style={{
-          fontFamily: 'Playfair Display, serif',
+          fontFamily: 'Inter, sans-serif',
           fontSize: 22,
           fontWeight: 700,
           marginBottom: 6,
@@ -120,11 +120,11 @@ export default function LoginPage() {
               borderRadius: 8,
               padding: '10px 13px',
               color: 'var(--text)',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Inter, sans-serif',
               fontSize: 13.5,
               outline: 'none',
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--gold)')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
             onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
           />
         </div>
@@ -157,11 +157,11 @@ export default function LoginPage() {
               borderRadius: 8,
               padding: '10px 13px',
               color: 'var(--text)',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Inter, sans-serif',
               fontSize: 13.5,
               outline: 'none',
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--gold)')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
             onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
           />
         </div>
@@ -174,12 +174,12 @@ export default function LoginPage() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 8,
-            background: loading ? 'var(--surface-3)' : 'var(--gold)',
-            color: '#0c0b0a',
+            background: loading ? 'var(--surface-3)' : 'var(--accent)',
+            color: '#ffffff',
             border: 'none',
             padding: '11px 26px',
             borderRadius: 8,
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Inter, sans-serif',
             fontSize: 13.5,
             fontWeight: 500,
             cursor: loading ? 'not-allowed' : 'pointer',
@@ -202,7 +202,7 @@ export default function LoginPage() {
         ¿No tienes cuenta?{' '}
         <Link
           href="/register"
-          style={{ color: 'var(--gold)', textDecoration: 'none' }}
+          style={{ color: 'var(--accent)', textDecoration: 'none' }}
         >
           Crear cuenta
         </Link>

@@ -3,10 +3,10 @@ export default function DashboardPage() {
     <div style={{ padding: '40px 44px' }}>
       <h1
         style={{
-          fontFamily: 'Playfair Display, serif',
-          fontSize: 30,
-          fontWeight: 700,
-          letterSpacing: '-0.5px',
+          fontFamily: 'Inter, sans-serif',
+          fontSize: 28,
+          fontWeight: 600,
+          letterSpacing: '-0.3px',
           lineHeight: 1,
         }}
       >

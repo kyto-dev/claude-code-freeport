@@ -23,7 +23,7 @@ export default function RegisterPage() {
     borderRadius: 8,
     padding: '10px 13px',
     color: 'var(--text)',
-    fontFamily: 'DM Sans, sans-serif',
+    fontFamily: 'Inter, sans-serif',
     fontSize: 13.5,
     outline: 'none',
   }
@@ -62,7 +62,7 @@ export default function RegisterPage() {
             style={{
               width: 22,
               height: 22,
-              background: 'var(--gold)',
+              background: 'var(--accent)',
               transform: 'rotate(45deg)',
               borderRadius: 3,
               flexShrink: 0,
@@ -70,7 +70,7 @@ export default function RegisterPage() {
           />
           <span
             style={{
-              fontFamily: 'Playfair Display, serif',
+              fontFamily: 'Inter, sans-serif',
               fontSize: 22,
               fontWeight: 700,
               letterSpacing: '-0.3px',
@@ -93,7 +93,7 @@ export default function RegisterPage() {
 
       <h1
         style={{
-          fontFamily: 'Playfair Display, serif',
+          fontFamily: 'Inter, sans-serif',
           fontSize: 22,
           fontWeight: 700,
           marginBottom: 6,
@@ -126,7 +126,7 @@ export default function RegisterPage() {
             placeholder="Tu nombre"
             required
             style={inputStyle}
-            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--gold)')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
             onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
           />
         </div>
@@ -143,7 +143,7 @@ export default function RegisterPage() {
             placeholder="tu@correo.com"
             required
             style={inputStyle}
-            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--gold)')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
             onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
           />
         </div>
@@ -161,7 +161,7 @@ export default function RegisterPage() {
             minLength={8}
             required
             style={inputStyle}
-            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--gold)')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
             onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
           />
         </div>
@@ -174,12 +174,12 @@ export default function RegisterPage() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 8,
-            background: loading ? 'var(--surface-3)' : 'var(--gold)',
-            color: '#0c0b0a',
+            background: loading ? 'var(--surface-3)' : 'var(--accent)',
+            color: '#ffffff',
             border: 'none',
             padding: '11px 26px',
             borderRadius: 8,
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Inter, sans-serif',
             fontSize: 13.5,
             fontWeight: 500,
             cursor: loading ? 'not-allowed' : 'pointer',
@@ -202,7 +202,7 @@ export default function RegisterPage() {
         ¿Ya tienes cuenta?{' '}
         <Link
           href="/login"
-          style={{ color: 'var(--gold)', textDecoration: 'none' }}
+          style={{ color: 'var(--accent)', textDecoration: 'none' }}
         >
           Iniciar sesión
         </Link>

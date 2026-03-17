@@ -130,7 +130,7 @@ export function Sidebar() {
             style={{
               width: 22,
               height: 22,
-              background: 'var(--gold)',
+              background: 'var(--accent)',
               transform: 'rotate(45deg)',
               borderRadius: 3,
               flexShrink: 0,
@@ -138,7 +138,7 @@ export function Sidebar() {
           />
           <span
             style={{
-              fontFamily: 'Playfair Display, serif',
+              fontFamily: 'Inter, sans-serif',
               fontSize: 20,
               fontWeight: 700,
               letterSpacing: '-0.3px',
@@ -251,7 +251,7 @@ export function Sidebar() {
           </button>
           <span
             style={{
-              fontFamily: 'Playfair Display, serif',
+              fontFamily: 'Inter, sans-serif',
               fontSize: 14,
               fontWeight: 500,
             }}
@@ -292,8 +292,8 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
         gap: 10,
         padding: '10px 12px',
         borderRadius: 9,
-        color: active ? 'var(--gold)' : 'var(--text-2)',
-        background: active ? 'var(--gold-dim)' : 'transparent',
+        color: active ? 'var(--accent)' : 'var(--text-2)',
+        background: active ? 'var(--accent-dim)' : 'transparent',
         fontSize: 13.5,
         textDecoration: 'none',
         transition: 'all 0.15s',
@@ -318,8 +318,8 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
         <span
           style={{
             marginLeft: 'auto',
-            background: 'var(--gold)',
-            color: '#0c0b0a',
+            background: 'var(--accent)',
+            color: '#ffffff',
             fontSize: 10,
             fontWeight: 600,
             padding: '1px 6px',
